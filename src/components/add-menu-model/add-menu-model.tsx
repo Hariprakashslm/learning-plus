@@ -7,6 +7,7 @@ import {
 import { Button } from './components/button.component.tsx';
 
 import styled from 'styled-components';
+import FaIconsDropdown from './components/icon-select.componet.tsx';
 
 export const Select = styled.select`
   width: 100%;
@@ -23,7 +24,7 @@ export const Select = styled.select`
 const SelectItem = styled.option``;
 
 export const Textarea = styled.textarea`
-  width: 100%;
+  width: 95%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -36,7 +37,7 @@ export const Textarea = styled.textarea`
 `;
 
 export const Input = styled.input`
-  width: 100%;
+  width: 95%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -88,6 +89,7 @@ const AddMenuModal = ({
       <DialogHeader>
         <DialogTitle>Add Menu</DialogTitle>
       </DialogHeader>
+      <FaIconsDropdown />
       <Input
         placeholder="Menu Name"
         value={name}

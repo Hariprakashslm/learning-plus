@@ -1,5 +1,10 @@
 import { createContext } from 'react';
-
-const EditModeContext = createContext(false);
+interface EditModeContextType {
+  isEditMode: boolean;
+  toggleEditMode: () => void;
+}
+const EditModeContext = createContext<EditModeContextType | undefined>(
+  undefined
+);
 
 export default EditModeContext;

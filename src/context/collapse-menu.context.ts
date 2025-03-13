@@ -1,5 +1,9 @@
 import { createContext } from 'react';
-
-const CollapseMenuContext = createContext(false);
+interface CollapseMenuContextType {
+  isCollapsed: boolean;
+}
+const CollapseMenuContext = createContext<CollapseMenuContextType | undefined>(
+  undefined
+);
 
 export default CollapseMenuContext;

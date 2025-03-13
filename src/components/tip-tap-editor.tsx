@@ -2,95 +2,146 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
-import { useState } from 'react';
+import styled from 'styled-components';
+import {
+  FaBold,
+  FaItalic,
+  FaUnderline,
+  FaHeading,
+  FaListUl,
+  FaListOl,
+  FaUndo,
+  FaRedo,
+} from 'react-icons/fa';
+
+const EditorContainer = styled.div`
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  overflow: hidden;
+`;
+
+const Toolbar = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+`;
+
+const Button = styled.button<{ active?: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background: ${({ active }) => (active ? '#007BFF' : '#e9ecef')};
+  color: ${({ active }) => (active ? '#fff' : '#333')};
+
+  &:hover {
+    background: ${({ active }) => (active ? '#0056b3' : '#d6d6d6')};
+  }
+`;
+const EditorContentStyled = styled(EditorContent)`
+  min-height: 200px; /* 🔹 Increased initial height */
+  padding: 20px;
+  font-size: 16px;
+  border: none; /* 🔹 Ensures no extra borders */
+  outline: none !important; /* 🔹 Removes outline when focused */
+  overflow-y: auto;
+  white-space: pre-wrap;
+  resize: vertical; /* 🔹 Allows manual resizing */
+`;
 
 const TiptapEditor = ({ onChange }: { onChange?: (data: string) => void }) => {
   const editor = useEditor({
     extensions: [
-      StarterKit, // ❌ No need to re-import Bold, Italic, Heading, Lists, History
+      StarterKit,
       Placeholder.configure({
         placeholder: 'Start typing here...',
       }),
-      Underline, // Underline is NOT included in StarterKit, so we keep it
+      Underline,
     ],
     content: '',
     onUpdate: ({ editor }) => {
-      console.log('editor.getHTML() => ', editor.getHTML());
-      if (onChange) onChange(editor.getHTML()); // Get content when updated
+      if (onChange) onChange(editor.getHTML());
     },
   });
 
   if (!editor) return null;
-
+  const toolbarSettings = [
+    {
+      onClick: editor.chain().focus().toggleBold().run,
+      key: 'bold',
+      icon: FaBold,
+    },
+  ];
   return (
-    <div className="editor-container">
+    <EditorContainer>
       {/* Toolbar */}
-      <div className="toolbar">
-        <button
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={editor.isActive('bold') ? 'active' : ''}
-        >
-          Bold
-        </button>
-        <button
+      <Toolbar>
+        {toolbarSettings.map((tool) => (
+          <Button
+            onClick={() => tool.onClick()}
+            active={editor.isActive(tool.key)}
+          >
+            <FaBold />
+          </Button>
+        ))}
+        <Button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={editor.isActive('italic') ? 'active' : ''}
+          active={editor.isActive('italic')}
         >
-          Italic
-        </button>
-        <button
+          <FaItalic /> Italic
+        </Button>
+        <Button
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={editor.isActive('underline') ? 'active' : ''}
+          active={editor.isActive('underline')}
         >
-          Underline
-        </button>
-        <button
+          <FaUnderline /> Underline
+        </Button>
+        <Button
           onClick={() =>
             editor.chain().focus().toggleHeading({ level: 1 }).run()
           }
-          className={editor.isActive('heading', { level: 1 }) ? 'active' : ''}
+          active={editor.isActive('heading', { level: 1 })}
         >
-          H1
-        </button>
-        <button
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
-          className={editor.isActive('heading', { level: 2 }) ? 'active' : ''}
-        >
-          H2
-        </button>
-        <button
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 3 }).run()
-          }
-          className={editor.isActive('heading', { level: 3 }) ? 'active' : ''}
-        >
-          H3
-        </button>
-        <button
+          <FaHeading /> H1
+        </Button>
+        <Button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive('bulletList') ? 'active' : ''}
+          active={editor.isActive('bulletList')}
         >
-          Bullet List
-        </button>
-        <button
+          <FaListUl /> Bullet List
+        </Button>
+        <Button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive('orderedList') ? 'active' : ''}
+          active={editor.isActive('orderedList')}
         >
-          Ordered List
-        </button>
-        <button onClick={() => editor.chain().focus().undo().run()}>
-          Undo
-        </button>
-        <button onClick={() => editor.chain().focus().redo().run()}>
-          Redo
-        </button>
-      </div>
+          <FaListOl /> Ordered List
+        </Button>
+        <Button onClick={() => editor.chain().focus().undo().run()}>
+          <FaUndo /> Undo
+        </Button>
+        <Button onClick={() => editor.chain().focus().redo().run()}>
+          <FaRedo /> Redo
+        </Button>
+      </Toolbar>
 
       {/* Editor Content */}
-      <EditorContent editor={editor} className="editor-content" />
-    </div>
+      <EditorContentStyled editor={editor} />
+    </EditorContainer>
   );
 };
 

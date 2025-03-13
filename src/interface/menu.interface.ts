@@ -3,7 +3,8 @@ type MenuStatus = 'Active' | 'Inactive';
 export interface IMenu {
   _id: number;
   name: string;
-  description: string;
+  icon?: string;
+  description?: string;
   status: MenuStatus;
   createdAt: Date;
   updatedAt: Date;
