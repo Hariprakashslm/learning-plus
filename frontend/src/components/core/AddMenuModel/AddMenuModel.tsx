@@ -4,6 +4,7 @@ import Button from "../Button";
 
 import styled from "styled-components";
 import FaIconsDropdown from "../FaIconsDropdown";
+import { IMenu } from "../../../interface/menu.interface";
 
 export const Select = styled.select`
   width: 100%;
@@ -44,16 +45,6 @@ export const Input = styled.input`
   }
 `;
 
-interface Menu {
-  _id: number;
-  name: string;
-  description: string;
-  status: "Active" | "Inactive";
-  createdAt: Date;
-  updatedAt: Date;
-  subMenu?: Menu[];
-}
-
 const AddMenuModal = ({
   isOpen,
   onClose,
@@ -61,20 +52,22 @@ const AddMenuModal = ({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (menu: Menu) => void;
+  onSave: (menu: IMenu) => void;
 }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState<Menu["status"]>("Active");
+  const [icon, setIcon] = useState("");
+  const [status, setStatus] = useState<IMenu["status"]>("Active");
 
   const handleSubmit = () => {
-    const newMenu: Menu = {
+    const newMenu: IMenu = {
       _id: Date.now(),
       name,
       description,
       status,
       createdAt: new Date(),
       updatedAt: new Date(),
+      icon,
     };
     onSave(newMenu);
     onClose();
@@ -85,7 +78,11 @@ const AddMenuModal = ({
       <DialogHeader>
         <DialogTitle>Add Menu</DialogTitle>
       </DialogHeader>
-      <FaIconsDropdown />
+      <FaIconsDropdown
+        onSelect={(iconName: string) => {
+          setIcon(iconName);
+        }}
+      />
       <Input
         placeholder="Menu Name"
         value={name}

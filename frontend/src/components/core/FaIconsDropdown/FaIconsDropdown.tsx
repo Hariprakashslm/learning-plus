@@ -74,7 +74,9 @@ const IconName = styled.span`
 `;
 
 // Main Component
-const FaIconsDropdown: React.FC = () => {
+const FaIconsDropdown: React.FC<{ onSelect: (data: string) => void }> = ({
+  onSelect,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -85,6 +87,7 @@ const FaIconsDropdown: React.FC = () => {
   );
 
   const handleSelect = (iconName: string) => {
+    onSelect(iconName);
     setSelectedIcon(iconName);
     setIsOpen(false);
   };

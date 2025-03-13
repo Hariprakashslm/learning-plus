@@ -1,36 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import styled from "styled-components";
-import { motion } from "framer-motion";
-import { FaBars, FaChevronDown, FaChevronRight } from "react-icons/fa";
-
-import * as FaIcons from "react-icons/fa";
-import { IMenu } from "../../../interface/menu.interface";
-import EditModeSwitch from "../ToggleEditSwitch/ToggleEditSwitch";
 import EditModeContext from "../../../context/EditModeContext";
 import MenuCollapseContext from "../../../context/MenuCollapseContext";
-import ToggleMenuButton from "../ToggleMenuButton/ToggleMenuButton";
-import AddMenuModal from "../AddMenuModel/AddMenuModel";
-import CollapseButton from "../CollapseButton";
-
-const IconComponent = ({
-  iconName,
-  size,
-}: {
-  iconName: string;
-  size: number;
-}) => {
-  const Icon = FaIcons[iconName as keyof typeof FaIcons];
-  return <Icon size={size} />;
-};
-// Styled Components
-const SidebarContainer = styled(motion.div)`
-  height: 100vh;
-  background: #1e1e2f;
-  color: white;
-  padding: 20px;
-  transition: width 0.3s ease;
-`;
-
+import styled from "styled-components";
+import { motion } from "framer-motion";
+import { FaChevronDown, FaChevronRight, FaEdit } from "react-icons/fa";
+import Icons from "./Icon";
 const MenuItem = styled.div`
   display: flex;
   align-items: center;
@@ -58,7 +32,7 @@ const NestedMenu = ({
   isSidebarOpen: boolean;
 }) => {
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
-  const [isModalOpen, setModalOpen] = useState(false);
+
   const toggleSubMenu = (name: string) => {
     setOpenMenus((prev) => ({ ...prev, [name]: !prev[name] }));
   };
@@ -73,18 +47,14 @@ const NestedMenu = ({
       }, {})
     );
   }, [collpased]);
+
   return (
     <>
-      <AddMenuModal
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={() => {}}
-      />
       {items.map((item, index) => (
         <div key={index}>
           <MenuItem onClick={() => item.subMenu && toggleSubMenu(item.name)}>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              {item.icon && <IconComponent iconName={item.icon} size={24} />}
+              {item.icon && <Icons iconName={item.icon} size={24} />}
               {isSidebarOpen && (
                 <span style={{ marginLeft: 10 }}>{item.name}</span>
               )}
@@ -95,13 +65,7 @@ const NestedMenu = ({
               >
                 {editModeContext?.isEditMode && (
                   <>
-                    <FaIcons.FaEdit onClick={(e) => e.stopPropagation()} />
-                    <FaIcons.FaPlus
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setModalOpen(true);
-                      }}
-                    />
+                    <FaEdit onClick={(e) => e.stopPropagation()} />
                   </>
                 )}
 
@@ -136,27 +100,4 @@ const NestedMenu = ({
   );
 };
 
-const ClassicMenu = ({ menus }: { menus: IMenu[] }) => {
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
-
-  const [isCollapsed, toggleCollpase] = useState(false);
-  return (
-    <MenuCollapseContext value={{ isCollapsed }}>
-      <SidebarContainer animate={{ width: isSidebarOpen ? 250 : 60 }}>
-        <ToggleMenuButton
-          setSidebarOpen={(data) => setSidebarOpen(data)}
-          isSidebarOpen={isSidebarOpen}
-        />
-        <EditModeSwitch isSidebarOpen={isSidebarOpen} />
-        <CollapseButton
-          isCollapsed={isCollapsed}
-          isSidebarOpen={isSidebarOpen}
-          onToggle={() => toggleCollpase((prev) => !prev)}
-        />
-        <NestedMenu items={menus} isSidebarOpen={isSidebarOpen} />
-      </SidebarContainer>
-    </MenuCollapseContext>
-  );
-};
-
-export default ClassicMenu;
+export default NestedMenu;

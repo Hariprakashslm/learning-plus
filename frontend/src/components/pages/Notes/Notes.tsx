@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import Card from "../../components/core/Card";
+import Card from "../../core/Card";
 import { useState } from "react";
-import menusData from "../../data";
-import EditModeContext from "../../context/EditModeContext";
-import ClassicMenu from "../../components/core/ClassicMenu";
-import Content from "../../components/core/Content";
+import menusData from "../../../data";
+import EditModeContext from "../../../context/EditModeContext";
+import ClassicMenu from "../../core/ClassicMenu";
+import Content from "../../core/Content";
 
 const MainContainer = styled.div`
   display: flex;
@@ -27,7 +27,7 @@ const Notes = () => {
   return (
     <EditModeContext value={{ isEditMode, toggleEditMode }}>
       <MainContainer>
-        <ClassicMenu menus={menusData} />
+        <ClassicMenu />
         <MainContent>
           <MainContentCardWrapper>
             <Content isEditMode={isEditMode} />
