@@ -1,15 +1,16 @@
-import { useContext, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { motion } from 'framer-motion';
-import { FaBars, FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { useContext, useEffect, useState } from "react";
+import styled from "styled-components";
+import { motion } from "framer-motion";
+import { FaBars, FaChevronDown, FaChevronRight } from "react-icons/fa";
 
-import * as FaIcons from 'react-icons/fa';
-import { IMenu } from '../interface/menu.interface';
-import EditModeSwitch from './edit-mode-switch.component';
-import AddMenuModal from './add-menu-model/add-menu-model';
-import EditModeContext from '../context/editMode.context';
-import CollapseMenuContext from '../context/collapse-menu.context';
-import CollapseButton from './collapse-button.component';
+import * as FaIcons from "react-icons/fa";
+import { IMenu } from "../../../interface/menu.interface";
+import EditModeSwitch from "../ToggleEditSwitch/ToggleEditSwitch";
+import EditModeContext from "../../../context/EditModeContext";
+import MenuCollapseContext from "../../../context/MenuCollapseContext";
+import ToggleMenuButton from "../ToggleMenuButton/ToggleMenuButton";
+import AddMenuModal from "../AddMenuModel/AddMenuModel";
+import CollapseButton from "../CollapseButton";
 
 const IconComponent = ({
   iconName,
@@ -28,15 +29,6 @@ const SidebarContainer = styled(motion.div)`
   color: white;
   padding: 20px;
   transition: width 0.3s ease;
-`;
-
-const ToggleButton = styled.button`
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 20px;
-  margin-bottom: 20px;
 `;
 
 const MenuItem = styled.div`
@@ -71,7 +63,7 @@ const NestedMenu = ({
     setOpenMenus((prev) => ({ ...prev, [name]: !prev[name] }));
   };
   const editModeContext = useContext(EditModeContext);
-  const collpased = useContext(CollapseMenuContext);
+  const collpased = useContext(MenuCollapseContext);
 
   useEffect(() => {
     setOpenMenus(
@@ -91,7 +83,7 @@ const NestedMenu = ({
       {items.map((item, index) => (
         <div key={index}>
           <MenuItem onClick={() => item.subMenu && toggleSubMenu(item.name)}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               {item.icon && <IconComponent iconName={item.icon} size={24} />}
               {isSidebarOpen && (
                 <span style={{ marginLeft: 10 }}>{item.name}</span>
@@ -99,7 +91,7 @@ const NestedMenu = ({
             </div>
             {isSidebarOpen && (
               <div
-                style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
               >
                 {editModeContext?.isEditMode && (
                   <>
@@ -114,7 +106,7 @@ const NestedMenu = ({
                 )}
 
                 {item.subMenu && (
-                  <span style={{ marginLeft: 'auto' }}>
+                  <span style={{ marginLeft: "auto" }}>
                     {openMenus[item.name] ? (
                       <FaChevronDown />
                     ) : (
@@ -128,7 +120,7 @@ const NestedMenu = ({
 
           {item.subMenu && (
             <SubMenuContainer
-              animate={{ height: openMenus[item.name] ? 'auto' : 0 }}
+              animate={{ height: openMenus[item.name] ? "auto" : 0 }}
             >
               {item.subMenu && (
                 <NestedMenu
@@ -139,7 +131,7 @@ const NestedMenu = ({
             </SubMenuContainer>
           )}
         </div>
-      ))}{' '}
+      ))}{" "}
     </>
   );
 };
@@ -149,11 +141,12 @@ const ClassicMenu = ({ menus }: { menus: IMenu[] }) => {
 
   const [isCollapsed, toggleCollpase] = useState(false);
   return (
-    <CollapseMenuContext value={{ isCollapsed }}>
+    <MenuCollapseContext value={{ isCollapsed }}>
       <SidebarContainer animate={{ width: isSidebarOpen ? 250 : 60 }}>
-        <ToggleButton onClick={() => setSidebarOpen(!isSidebarOpen)}>
-          <FaBars />
-        </ToggleButton>
+        <ToggleMenuButton
+          setSidebarOpen={(data) => setSidebarOpen(data)}
+          isSidebarOpen={isSidebarOpen}
+        />
         <EditModeSwitch isSidebarOpen={isSidebarOpen} />
         <CollapseButton
           isCollapsed={isCollapsed}
@@ -162,7 +155,7 @@ const ClassicMenu = ({ menus }: { menus: IMenu[] }) => {
         />
         <NestedMenu items={menus} isSidebarOpen={isSidebarOpen} />
       </SidebarContainer>
-    </CollapseMenuContext>
+    </MenuCollapseContext>
   );
 };
 

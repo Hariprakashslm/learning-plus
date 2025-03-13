@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-const CardWrapper = styled.div`
+const Card = styled.div`
   width: 300px;
   padding: 20px;
   background: white;
@@ -13,4 +13,4 @@ const CardWrapper = styled.div`
   }
 `;
 
-export default CardWrapper;
+export default Card;

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import * as FaIcons from 'react-icons/fa';
+import React, { useState } from "react";
+import styled from "styled-components";
+import * as FaIcons from "react-icons/fa";
 
 // Styled Components
 const DropdownContainer = styled.div`
@@ -77,7 +77,7 @@ const IconName = styled.span`
 const FaIconsDropdown: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   // Get all FontAwesome icons
   const iconEntries = Object.entries(FaIcons).filter(([name]) =>
@@ -103,7 +103,7 @@ const FaIconsDropdown: React.FC = () => {
             <span>{selectedIcon}</span>
           </>
         ) : (
-          'Select an Icon'
+          "Select an Icon"
         )}
       </DropdownButton>
 

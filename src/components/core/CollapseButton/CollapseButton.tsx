@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-import { FaAngleDoubleLeft, FaAngleDoubleRight } from 'react-icons/fa';
+import React from "react";
+import styled from "styled-components";
+import { FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";
 
 const Button = styled.div`
   background: #fff;
@@ -23,13 +23,13 @@ const Icon = styled.span`
   font-size: 20px;
 `;
 
-interface CollapseMenuButtonProps {
+interface CollapseButtonProps {
   isCollapsed: boolean;
   isSidebarOpen: boolean;
   onToggle: () => void;
 }
 
-const CollapseMenuButton: React.FC<CollapseMenuButtonProps> = ({
+const CollapseButton: React.FC<CollapseButtonProps> = ({
   isCollapsed,
   onToggle,
   isSidebarOpen,
@@ -39,9 +39,9 @@ const CollapseMenuButton: React.FC<CollapseMenuButtonProps> = ({
       <Icon>
         {isCollapsed ? <FaAngleDoubleRight /> : <FaAngleDoubleLeft />}
       </Icon>
-      {isSidebarOpen && (isCollapsed ? 'Expand Menu' : 'Collapse Menu')}
+      {isSidebarOpen && (isCollapsed ? "Expand Menu" : "Collapse Menu")}
     </Button>
   );
 };
 
-export default CollapseMenuButton;
+export default CollapseButton;

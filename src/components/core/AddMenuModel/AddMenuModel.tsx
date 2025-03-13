@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
-import {
-  Dialog,
-  DialogHeader,
-  DialogTitle,
-} from './components/dialog.component.tsx';
-import { Button } from './components/button.component.tsx';
+import React, { useState } from "react";
+import { Dialog, DialogHeader, DialogTitle } from "../Dialog";
+import Button from "../Button";
 
-import styled from 'styled-components';
-import FaIconsDropdown from './components/icon-select.componet.tsx';
+import styled from "styled-components";
+import FaIconsDropdown from "../FaIconsDropdown";
 
 export const Select = styled.select`
   width: 100%;
@@ -52,7 +48,7 @@ interface Menu {
   _id: number;
   name: string;
   description: string;
-  status: 'Active' | 'Inactive';
+  status: "Active" | "Inactive";
   createdAt: Date;
   updatedAt: Date;
   subMenu?: Menu[];
@@ -67,9 +63,9 @@ const AddMenuModal = ({
   onClose: () => void;
   onSave: (menu: Menu) => void;
 }) => {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [status, setStatus] = useState<Menu['status']>('Active');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [status, setStatus] = useState<Menu["status"]>("Active");
 
   const handleSubmit = () => {
     const newMenu: Menu = {
@@ -102,12 +98,12 @@ const AddMenuModal = ({
       />
       <Select
         value={status}
-        onChange={(e) => setStatus(e.target.value as 'Active' | 'Inactive')}
+        onChange={(e) => setStatus(e.target.value as "Active" | "Inactive")}
       >
         <SelectItem value="Active">Active</SelectItem>
         <SelectItem value="Inactive">Inactive</SelectItem>
       </Select>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
         <Button variant="outline" onClick={onClose}>
           Cancel
         </Button>
