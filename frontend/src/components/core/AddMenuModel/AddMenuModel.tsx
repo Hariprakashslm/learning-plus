@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Ref, useImperativeHandle, useState } from "react";
 import { Dialog, DialogHeader, DialogTitle } from "../Dialog";
 import Button from "../Button";
 
@@ -45,14 +45,20 @@ export const Input = styled.input`
   }
 `;
 
+interface RefType {
+  setValue: (menu: IMenu) => void;
+}
+
 const AddMenuModal = ({
   isOpen,
   onClose,
   onSave,
+  ref,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSave: (menu: IMenu) => void;
+  ref: Ref<RefType>;
 }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -61,24 +67,46 @@ const AddMenuModal = ({
 
   const handleSubmit = () => {
     const newMenu: IMenu = {
-      _id: Date.now(),
       name,
       description,
       status,
-      createdAt: new Date(),
-      updatedAt: new Date(),
       icon,
     };
     onSave(newMenu);
+    resetValues();
+  };
+
+  const handleClose = () => {
+    resetValues();
     onClose();
   };
 
+  useImperativeHandle(ref, () => {
+    return {
+      setValue: (menu: IMenu) => {
+        console.log("set value => ", menu);
+        setName(menu.name);
+        setDescription(menu.description || "");
+        setIcon(menu?.icon || "");
+        setStatus(menu.status);
+      },
+    };
+  });
+
+  const resetValues = () => {
+    setName("");
+    setDescription("");
+    setIcon("");
+    setStatus("Active");
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogHeader>
         <DialogTitle>Add Menu</DialogTitle>
       </DialogHeader>
       <FaIconsDropdown
+        iconName={icon}
         onSelect={(iconName: string) => {
           setIcon(iconName);
         }}
@@ -101,7 +129,7 @@ const AddMenuModal = ({
         <SelectItem value="Inactive">Inactive</SelectItem>
       </Select>
       <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
-        <Button variant="outline" onClick={onClose}>
+        <Button variant="outline" onClick={handleClose}>
           Cancel
         </Button>
         <Button onClick={handleSubmit}>Save</Button>

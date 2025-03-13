@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import * as FaIcons from "react-icons/fa";
 
@@ -74,9 +74,10 @@ const IconName = styled.span`
 `;
 
 // Main Component
-const FaIconsDropdown: React.FC<{ onSelect: (data: string) => void }> = ({
-  onSelect,
-}) => {
+const FaIconsDropdown: React.FC<{
+  onSelect: (data: string) => void;
+  iconName?: string;
+}> = ({ onSelect, iconName }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -95,6 +96,12 @@ const FaIconsDropdown: React.FC<{ onSelect: (data: string) => void }> = ({
   const SelectedIconComponent = selectedIcon
     ? FaIcons[selectedIcon as keyof typeof FaIcons]
     : null;
+
+  useEffect(() => {
+    if (iconName) {
+      setSelectedIcon(iconName);
+    }
+  }, [iconName]);
 
   return (
     <DropdownContainer>

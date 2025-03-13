@@ -1,4 +1,4 @@
-const userRoutes = require("./usersRoute");
+const menuRoute = require("./menuRoute");
 
 const appRoutes = require("express").Router();
 
@@ -15,7 +15,7 @@ const globalCustomMiddleware = [
 
 const routesToResister = [
   {
-    path: "/users",
+    path: "/menus",
     middlewares: [
       (req, res, next) => {
         console.log("first root middleware");
@@ -26,7 +26,7 @@ const routesToResister = [
         next();
       },
     ],
-    routes: userRoutes,
+    routes: menuRoute,
   },
 ];
 

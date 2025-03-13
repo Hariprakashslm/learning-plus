@@ -1,12 +1,12 @@
-type MenuStatus = 'Active' | 'Inactive';
+type MenuStatus = "Active" | "Inactive";
 
 export interface IMenu {
-  _id: number;
+  _id?: string;
   name: string;
   icon?: string;
   description?: string;
   status: MenuStatus;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   subMenu?: IMenu[]; // Optional nested sub-menu
 }

@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { FaPlus } from "react-icons/fa";
 import EditModeContext from "../../../context/EditModeContext";
 import AddMenuModal from "../AddMenuModel/AddMenuModel";
-import MenuListContext from "../../../context/MenuListContext";
+import menuService from "../../../services/menuServices";
+import { IMenu } from "../../../interface/menu.interface";
 
 // Styled Components
 const Container = styled.div`
@@ -70,22 +71,15 @@ const AddIcon = styled(FaPlus)<SwitchProps>`
   font-size: 20px;
 `;
 
-const ToggleEditSwitch: React.FC<{ isSidebarOpen: boolean }> = ({
-  isSidebarOpen,
-}) => {
+const ToggleEditSwitch: React.FC<{
+  isSidebarOpen: boolean;
+  onAdd: () => void;
+}> = ({ isSidebarOpen, onAdd }) => {
   const editModeContext = useContext(EditModeContext);
   const isEditing = !!editModeContext?.isEditMode;
-  const [isModalOpen, setModalOpen] = useState(false);
-  const menus = useContext(MenuListContext);
+
   return (
     <Container>
-      <AddMenuModal
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={(data) => {
-          menus.setMenus([...menus.values, data]);
-        }}
-      />
       <SwitchContainer>
         <SwitchInput
           type="checkbox"
@@ -100,9 +94,7 @@ const ToggleEditSwitch: React.FC<{ isSidebarOpen: boolean }> = ({
         </EditText>
       )}
       {/* Edit Mode Indicator */}
-      {isSidebarOpen && (
-        <AddIcon checked={isEditing} onClick={() => setModalOpen(true)} />
-      )}
+      {isSidebarOpen && <AddIcon checked={isEditing} onClick={() => onAdd()} />}
     </Container>
   );
 };

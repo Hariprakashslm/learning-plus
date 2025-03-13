@@ -1,4 +1,4 @@
-const usersController = require("../controllers/users.controller");
+const menusController = require("../controllers/menus.controller");
 
 const userRoutes = [
   {
@@ -14,7 +14,17 @@ const userRoutes = [
         next();
       },
     ],
-    handler: usersController.getUsers,
+    handler: menusController.getMenus,
+  },
+  {
+    path: "/",
+    method: "post",
+    handler: menusController.createMenus,
+  },
+  {
+    path: "/",
+    method: "put",
+    handler: menusController.update,
   },
 ];
 

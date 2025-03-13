@@ -3,8 +3,9 @@ import EditModeContext from "../../../context/EditModeContext";
 import MenuCollapseContext from "../../../context/MenuCollapseContext";
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import { FaChevronDown, FaChevronRight, FaEdit } from "react-icons/fa";
+import { FaChevronDown, FaChevronRight, FaEdit, FaPlus } from "react-icons/fa";
 import Icons from "./Icon";
+import { IMenu } from "../../../interface/menu.interface";
 const MenuItem = styled.div`
   display: flex;
   align-items: center;
@@ -27,9 +28,13 @@ const SubMenuContainer = styled(motion.div)`
 const NestedMenu = ({
   items,
   isSidebarOpen,
+  onAdd,
+  onEdit,
 }: {
   items: any[];
   isSidebarOpen: boolean;
+  onAdd: (parentId: string) => void;
+  onEdit: (menu: IMenu) => void;
 }) => {
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
 
@@ -65,7 +70,18 @@ const NestedMenu = ({
               >
                 {editModeContext?.isEditMode && (
                   <>
-                    <FaEdit onClick={(e) => e.stopPropagation()} />
+                    <FaEdit
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(item);
+                      }}
+                    />
+                    <FaPlus
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAdd(item._id);
+                      }}
+                    />
                   </>
                 )}
 
@@ -90,6 +106,8 @@ const NestedMenu = ({
                 <NestedMenu
                   items={item.subMenu}
                   isSidebarOpen={isSidebarOpen}
+                  onAdd={onAdd}
+                  onEdit={onEdit}
                 />
               )}
             </SubMenuContainer>
