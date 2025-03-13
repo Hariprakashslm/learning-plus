@@ -1,7 +1,9 @@
 import React, { use, useState } from 'react';
 import styled from 'styled-components';
-import { FaChevronDown, FaChevronRight, FaEdit } from 'react-icons/fa';
+import { FaChevronDown, FaChevronRight, FaEdit, FaPlus } from 'react-icons/fa';
 import EditModeContext from '../context/editMode.context';
+import AddMenuModal from './add-menu-model/add-menu-model';
+import { Button } from './add-menu-model/components/button.component';
 
 // TypeScript type definitions
 type MenuStatus = 'Active' | 'Inactive';
@@ -17,7 +19,7 @@ interface Menu {
 }
 
 // Styled Components
-const MenuContainer = styled.div<{ isMain: boolean }>`
+const MenuContainer = styled.div<{ ismain: string }>`
   margin: 20px auto;
   font-family: 'Arial', sans-serif;
   background: #fff;
@@ -26,7 +28,7 @@ const MenuContainer = styled.div<{ isMain: boolean }>`
   padding: 15px;
 
   ${(props) => {
-    return props.isMain ? 'height:100vh;width: 300px;' : '';
+    return props.ismain === 'true' ? 'height:100vh;width: 300px;' : '';
   }}
 `;
 
@@ -86,10 +88,17 @@ const ToggleAllButton = styled.button`
 // Collapsible Menu Component
 const MenuComponent: React.FC<{
   menus: Menu[];
-  isMain?: boolean;
-}> = ({ menus, isMain = true }) => {
+  ismain?: string;
+}> = ({ menus, ismain = 'true' }) => {
   const isEditMode = use(EditModeContext);
   const [openMenus, setOpenMenus] = useState<{ [key: number]: boolean }>({});
+  const [isModalOpen, setModalOpen] = useState(false);
+  // const [menus, setMenus] = useState([]);
+
+  const handleSaveMenu = (menu: unknown) => {
+    console.log({ menu });
+    // setMenus([...menus, menu]);
+  };
 
   const [allOpen, setAllOpen] = useState(false);
 
@@ -120,8 +129,13 @@ const MenuComponent: React.FC<{
   };
 
   return (
-    <MenuContainer isMain={isMain}>
-      {isMain && (
+    <MenuContainer ismain={ismain}>
+      <AddMenuModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSaveMenu}
+      />
+      {ismain && (
         <ToggleAllButton onClick={toggleAllMenus}>
           {allOpen ? 'Close All Menus' : 'Open All Menus'}
         </ToggleAllButton>
@@ -137,7 +151,12 @@ const MenuComponent: React.FC<{
 
             {(menu.subMenu || isEditMode) && (
               <IconWrapper>
-                {isEditMode && <FaEdit onClick={(e) => e.stopPropagation()} />}
+                {isEditMode && (
+                  <>
+                    <FaEdit onClick={(e) => e.stopPropagation()} />
+                    <FaPlus onClick={() => setModalOpen(true)} />
+                  </>
+                )}
                 {menu.subMenu &&
                   (openMenus[menu._id] ? (
                     <FaChevronDown />
@@ -149,7 +168,7 @@ const MenuComponent: React.FC<{
           </MenuItem>
           {menu.subMenu && openMenus[menu._id] && (
             <SubMenuContainer>
-              <MenuComponent menus={menu.subMenu} isMain={false} />
+              <MenuComponent menus={menu.subMenu} ismain={'false'} />
             </SubMenuContainer>
           )}
         </div>
