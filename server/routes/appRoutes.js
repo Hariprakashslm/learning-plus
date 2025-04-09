@@ -1,28 +1,24 @@
-const menuRoute = require("./menuRoute");
+const menuRoute = require('./menuRoute');
 
-const appRoutes = require("express").Router();
+const appRoutes = require('express').Router();
 
 const globalCustomMiddleware = [
   (req, res, next) => {
-    console.log("first global middleware");
     next();
   },
   (req, res, next) => {
-    console.log("secound global middleware");
     next();
   },
 ];
 
 const routesToResister = [
   {
-    path: "/menus",
+    path: '/menus',
     middlewares: [
       (req, res, next) => {
-        console.log("first root middleware");
         next();
       },
       (req, res, next) => {
-        console.log("secound root middleware");
         next();
       },
     ],

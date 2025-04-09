@@ -1,4 +1,4 @@
-type MenuStatus = "Active" | "Inactive";
+type MenuStatus = 'Active' | 'Inactive';
 
 export interface IMenu {
   _id?: string;
@@ -8,5 +8,14 @@ export interface IMenu {
   status: MenuStatus;
   createdAt?: Date;
   updatedAt?: Date;
-  subMenu?: IMenu[]; // Optional nested sub-menu
+  subMenu?: IMenu[];
+}
+
+export interface ICreateMenu {
+  _id?: string;
+  name: string;
+  icon?: string;
+  description?: string;
+  status: MenuStatus;
+  parentId?: string;
 }

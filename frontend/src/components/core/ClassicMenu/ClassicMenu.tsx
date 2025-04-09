@@ -1,23 +1,25 @@
-import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import { motion } from "framer-motion";
-import { IMenu } from "../../../interface/menu.interface";
-import ToggleEditSwitch from "../ToggleEditSwitch/ToggleEditSwitch";
-import MenuCollapseContext from "../../../context/MenuCollapseContext";
-import ToggleMenuButton from "../ToggleMenuButton/ToggleMenuButton";
-import CollapseButton from "../CollapseButton";
-import MenuListContext from "../../../context/MenuListContext";
-import NestedMenu from "./NestedMen";
-import menuService from "../../../services/menuServices";
-import AddMenuModal from "../AddMenuModel/AddMenuModel";
+import { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import { ICreateMenu, IMenu } from '../../../interface/menu.interface';
+import ToggleEditSwitch from '../ToggleEditSwitch/ToggleEditSwitch';
+import MenuCollapseContext from '../../../context/MenuCollapseContext';
+import ToggleMenuButton from '../ToggleMenuButton/ToggleMenuButton';
+import CollapseButton from '../CollapseButton';
+import MenuListContext from '../../../context/MenuListContext';
+import NestedMenu from './NestedMen';
+import menuService from '../../../services/menuServices';
+import AddMenuModal from '../AddMenuModel/AddMenuModel';
 
 // Styled Components
 const SidebarContainer = styled(motion.div)`
   height: 100vh;
+  overflow-y: scroll;
   background: #1e1e2f;
   color: white;
   padding: 20px;
   transition: width 0.3s ease;
+  z-index: 999;
 `;
 
 interface RefType {
@@ -30,8 +32,7 @@ const ClassicMenu = () => {
   const [isCollapsed, toggleCollpase] = useState(false);
   const [menus, setMenus] = useState<IMenu[]>([]);
 
-  const [currentId, setCurrentId] = useState("");
-  const [parentId, setParentId] = useState("");
+  const [parentId, setParentId] = useState('');
 
   useEffect(() => {
     getMenus();
@@ -40,14 +41,19 @@ const ClassicMenu = () => {
   const getMenus = () => {
     menuService.getMenu().then((data) => {
       setMenus(data.data);
-      console.log("menu response => ", data);
     });
   };
   const [isModalOpen, setModalOpen] = useState(false);
-
-  const saveMenus = (menus: IMenu[]) => {
+  const createMenus = (menus: ICreateMenu[]) => {
     menuService.createMenus(menus).then(() => {
       getMenus();
+      setModalOpen(false);
+    });
+  };
+  const saveMenus = (menu: ICreateMenu) => {
+    menuService.updateMenu(menu).then(() => {
+      getMenus();
+      setModalOpen(false);
     });
   };
 
@@ -60,7 +66,15 @@ const ClassicMenu = () => {
             isOpen={isModalOpen}
             onClose={() => setModalOpen(false)}
             onSave={(data) => {
-              saveMenus([data]);
+              if (!data?._id) {
+                const currentData: ICreateMenu = data;
+                if (parentId) {
+                  currentData.parentId = parentId;
+                }
+                createMenus([currentData]);
+              } else {
+                saveMenus(data);
+              }
             }}
             ref={ref}
           />
@@ -72,6 +86,7 @@ const ClassicMenu = () => {
             isSidebarOpen={isSidebarOpen}
             onAdd={() => {
               setModalOpen(true);
+              setParentId('');
             }}
           />
           <CollapseButton
@@ -87,9 +102,14 @@ const ClassicMenu = () => {
               setModalOpen(true);
             }}
             onEdit={(menu) => {
-              setCurrentId(menu._id!);
+              setParentId('');
               if (ref) ref.current?.setValue(menu);
               setModalOpen(true);
+            }}
+            onDelete={(id) => {
+              menuService.deleteMenu(id).then(() => {
+                getMenus();
+              });
             }}
           />
         </MenuListContext>

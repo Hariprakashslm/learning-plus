@@ -1,13 +1,14 @@
-import styled from "styled-components";
-import Card from "../../core/Card";
-import { useState } from "react";
-import menusData from "../../../data";
-import EditModeContext from "../../../context/EditModeContext";
-import ClassicMenu from "../../core/ClassicMenu";
-import Content from "../../core/Content";
+import styled from 'styled-components';
+import Card from '../../core/Card';
+import { useState } from 'react';
+import EditModeContext from '../../../context/EditModeContext';
+import ClassicMenu from '../../core/ClassicMenu';
+import Content from '../../core/Content';
 
 const MainContainer = styled.div`
   display: flex;
+  width: 95vw;
+  height: 90vh;
 `;
 
 const MainContent = styled.div`
@@ -17,7 +18,7 @@ const MainContent = styled.div`
 
 const MainContentCardWrapper = styled(Card)`
   width: 100%;
-  min-height: 80%;
+  min-height: 100%;
 `;
 
 const Notes = () => {

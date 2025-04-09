@@ -1,11 +1,18 @@
-import { useContext, useEffect, useState } from "react";
-import EditModeContext from "../../../context/EditModeContext";
-import MenuCollapseContext from "../../../context/MenuCollapseContext";
-import styled from "styled-components";
-import { motion } from "framer-motion";
-import { FaChevronDown, FaChevronRight, FaEdit, FaPlus } from "react-icons/fa";
-import Icons from "./Icon";
-import { IMenu } from "../../../interface/menu.interface";
+import { useCallback, useContext, useEffect, useState } from 'react';
+import EditModeContext from '../../../context/EditModeContext';
+import MenuCollapseContext from '../../../context/MenuCollapseContext';
+import styled from 'styled-components';
+import { motion } from 'framer-motion';
+import {
+  FaChevronDown,
+  FaChevronRight,
+  FaEdit,
+  FaPlus,
+  FaTrash,
+} from 'react-icons/fa';
+import Icons from './Icon';
+import { IMenu } from '../../../interface/menu.interface';
+import menuService from '../../../services/menuServices';
 const MenuItem = styled.div`
   display: flex;
   align-items: center;
@@ -30,11 +37,13 @@ const NestedMenu = ({
   isSidebarOpen,
   onAdd,
   onEdit,
+  onDelete,
 }: {
   items: any[];
   isSidebarOpen: boolean;
   onAdd: (parentId: string) => void;
   onEdit: (menu: IMenu) => void;
+  onDelete: (id: string) => void;
 }) => {
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
 
@@ -58,7 +67,7 @@ const NestedMenu = ({
       {items.map((item, index) => (
         <div key={index}>
           <MenuItem onClick={() => item.subMenu && toggleSubMenu(item.name)}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               {item.icon && <Icons iconName={item.icon} size={24} />}
               {isSidebarOpen && (
                 <span style={{ marginLeft: 10 }}>{item.name}</span>
@@ -66,7 +75,7 @@ const NestedMenu = ({
             </div>
             {isSidebarOpen && (
               <div
-                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
               >
                 {editModeContext?.isEditMode && (
                   <>
@@ -82,11 +91,17 @@ const NestedMenu = ({
                         onAdd(item._id);
                       }}
                     />
+                    <FaTrash
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(item._id);
+                      }}
+                    />
                   </>
                 )}
 
-                {item.subMenu && (
-                  <span style={{ marginLeft: "auto" }}>
+                {!!item.subMenu.length && (
+                  <span style={{ marginLeft: 'auto' }}>
                     {openMenus[item.name] ? (
                       <FaChevronDown />
                     ) : (
@@ -98,9 +113,9 @@ const NestedMenu = ({
             )}
           </MenuItem>
 
-          {item.subMenu && (
+          {!!item.subMenu.length && (
             <SubMenuContainer
-              animate={{ height: openMenus[item.name] ? "auto" : 0 }}
+              animate={{ height: openMenus[item.name] ? 'auto' : 0 }}
             >
               {item.subMenu && (
                 <NestedMenu
@@ -108,12 +123,13 @@ const NestedMenu = ({
                   isSidebarOpen={isSidebarOpen}
                   onAdd={onAdd}
                   onEdit={onEdit}
+                  onDelete={onDelete}
                 />
               )}
             </SubMenuContainer>
           )}
         </div>
-      ))}{" "}
+      ))}{' '}
     </>
   );
 };

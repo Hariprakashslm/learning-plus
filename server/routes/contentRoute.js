@@ -1,6 +1,6 @@
-const menusController = require('../controllers/menus.controller');
+const contentController = require('../controllers/content.controller');
 
-const userRoutes = [
+const contentRoutes = [
   {
     path: '/',
     method: 'get',
@@ -12,23 +12,23 @@ const userRoutes = [
         next();
       },
     ],
-    handler: menusController.getMenus,
+    handler: contentController.getContent,
   },
   {
     path: '/',
     method: 'post',
-    handler: menusController.createMenus,
+    handler: contentController.createContent,
   },
   {
     path: '/:id',
     method: 'put',
-    handler: menusController.update,
+    handler: contentController.update,
   },
   {
     path: '/:id',
     method: 'delete',
-    handler: menusController.delete,
+    handler: contentController.delete,
   },
 ];
 
-module.exports = userRoutes;
+module.exports = contentRoutes;
