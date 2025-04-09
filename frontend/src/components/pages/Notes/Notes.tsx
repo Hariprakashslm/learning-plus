@@ -4,6 +4,7 @@ import { useState } from 'react';
 import EditModeContext from '../../../context/EditModeContext';
 import ClassicMenu from '../../core/ClassicMenu';
 import Content from '../../core/Content';
+import ResizableSidebar from '../../core/ResizableSidebar';
 
 const MainContainer = styled.div`
   display: flex;
@@ -28,7 +29,10 @@ const Notes = () => {
   return (
     <EditModeContext value={{ isEditMode, toggleEditMode }}>
       <MainContainer>
-        <ClassicMenu />
+        <ResizableSidebar>
+          <ClassicMenu />
+        </ResizableSidebar>
+
         <MainContent>
           <MainContentCardWrapper>
             <Content isEditMode={isEditMode} />

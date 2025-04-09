@@ -5,6 +5,31 @@ import Button from '../Button';
 import styled from 'styled-components';
 import FaIconsDropdown from '../FaIconsDropdown';
 import { ICreateMenu, IMenu } from '../../../interface/menu.interface';
+const StyledModalContent = styled.div`
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+`;
+
+const FormSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
+const Label = styled.label`
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 10px;
+`;
 
 export const Select = styled.select`
   width: 100%;
@@ -107,38 +132,55 @@ const AddMenuModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogHeader>
-        <DialogTitle>{_id ? 'Edit Menu' : 'Add Menu'}</DialogTitle>
-      </DialogHeader>
-      <FaIconsDropdown
-        iconName={icon}
-        onSelect={(iconName: string) => {
-          setIcon(iconName);
-        }}
-      />
-      <Input
-        placeholder="Menu Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <Textarea
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <Select
-        value={status}
-        onChange={(e) => setStatus(e.target.value as 'Active' | 'Inactive')}
-      >
-        <SelectItem value="Active">Active</SelectItem>
-        <SelectItem value="Inactive">Inactive</SelectItem>
-      </Select>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-        <Button variant="outline" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button onClick={handleSubmit}>Save</Button>
-      </div>
+      <StyledModalContent>
+        <DialogHeader>
+          <DialogTitle>{_id ? 'Edit Menu' : 'Add Menu'}</DialogTitle>
+        </DialogHeader>
+
+        <FormSection>
+          <Label>Icon</Label>
+          <FaIconsDropdown
+            iconName={icon}
+            onSelect={(iconName: string) => setIcon(iconName)}
+          />
+        </FormSection>
+
+        <FormSection>
+          <Label>Menu Name</Label>
+          <Input
+            placeholder="Enter menu name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </FormSection>
+
+        <FormSection>
+          <Label>Description</Label>
+          <Textarea
+            placeholder="Describe the menu"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </FormSection>
+
+        <FormSection>
+          <Label>Status</Label>
+          <Select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as 'Active' | 'Inactive')}
+          >
+            <SelectItem value="Active">Active</SelectItem>
+            <SelectItem value="Inactive">Inactive</SelectItem>
+          </Select>
+        </FormSection>
+
+        <ButtonGroup>
+          <Button variant="outline" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit}>Save</Button>
+        </ButtonGroup>
+      </StyledModalContent>
     </Dialog>
   );
 };

@@ -1,38 +1,61 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import EditModeContext from '../../../context/EditModeContext';
 import MenuCollapseContext from '../../../context/MenuCollapseContext';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
-import {
-  FaChevronDown,
-  FaChevronRight,
-  FaEdit,
-  FaPlus,
-  FaTrash,
-} from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaChevronRight, FaEdit, FaPlus, FaTrash } from 'react-icons/fa';
 import Icons from './Icon';
 import { IMenu } from '../../../interface/menu.interface';
-import menuService from '../../../services/menuServices';
+
+interface NestedMenuProps {
+  items: IMenu[];
+  isSidebarOpen: boolean;
+  onAdd: (parentId: string) => void;
+  onEdit: (menu: IMenu) => void;
+  onDelete: (id: string) => void;
+}
+
 const MenuItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 10px 14px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.25s ease;
+  position: relative;
+  background: #1e1e2f;
+  border: 1px solid #2c2c40;
+  margin-bottom: 8px;
+
   &:hover {
-    background: #33334d;
+    background: #2b2b45;
+    transform: scale(1.01);
+    box-shadow: 0 0 5px #4b4bff44;
   }
 `;
 
-const SubMenuContainer = styled(motion.div)`
-  overflow: hidden;
-  margin-left: 20px;
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
 `;
 
-// Recursive Menu Rendering Component
-const NestedMenu = ({
+const ChevronIcon = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+`;
+
+const SubMenuContainer = styled(motion.div)`
+  margin-left: 20px;
+  padding-left: 10px;
+  border-left: 2px solid #444;
+  overflow: hidden;
+`;
+
+const NestedMenu: React.FC<NestedMenuProps> = ({
   items,
   isSidebarOpen,
   onAdd,
@@ -45,91 +68,104 @@ const NestedMenu = ({
   onEdit: (menu: IMenu) => void;
   onDelete: (id: string) => void;
 }) => {
-  const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({});
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
-  const toggleSubMenu = (name: string) => {
-    setOpenMenus((prev) => ({ ...prev, [name]: !prev[name] }));
+  const toggleSubMenu = (id: string) => {
+    setOpenMenus((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
   const editModeContext = useContext(EditModeContext);
-  const collpased = useContext(MenuCollapseContext);
+  const collapsedContext = useContext(MenuCollapseContext);
 
   useEffect(() => {
-    setOpenMenus(
-      items.reduce((prev, item) => {
-        prev[item.name] = !!collpased?.isCollapsed;
-        return prev;
-      }, {})
+    const initialOpenMenus = items.reduce<Record<string, boolean>>(
+      (acc, item) => {
+        acc[item._id || ''] = !collapsedContext?.isCollapsed;
+        return acc;
+      },
+      {}
     );
-  }, [collpased]);
+    setOpenMenus(initialOpenMenus);
+  }, [collapsedContext, items]);
 
   return (
     <>
-      {items.map((item, index) => (
-        <div key={index}>
-          <MenuItem onClick={() => item.subMenu && toggleSubMenu(item.name)}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              {item.icon && <Icons iconName={item.icon} size={24} />}
-              {isSidebarOpen && (
-                <span style={{ marginLeft: 10 }}>{item.name}</span>
-              )}
-            </div>
-            {isSidebarOpen && (
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
-              >
-                {editModeContext?.isEditMode && (
-                  <>
-                    <FaEdit
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEdit(item);
-                      }}
-                    />
-                    <FaPlus
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onAdd(item._id);
-                      }}
-                    />
-                    <FaTrash
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(item._id);
-                      }}
-                    />
-                  </>
-                )}
+      {items.map((item) => {
+        const isOpen = openMenus[item._id || ''];
 
-                {!!item.subMenu.length && (
-                  <span style={{ marginLeft: 'auto' }}>
-                    {openMenus[item.name] ? (
-                      <FaChevronDown />
-                    ) : (
-                      <FaChevronRight />
-                    )}
-                  </span>
-                )}
-              </div>
-            )}
-          </MenuItem>
-
-          {!!item.subMenu.length && (
-            <SubMenuContainer
-              animate={{ height: openMenus[item.name] ? 'auto' : 0 }}
+        return (
+          <div key={item._id}>
+            <MenuItem
+              onClick={() => item.subMenu?.length && toggleSubMenu(item._id!)}
             >
-              {item.subMenu && (
-                <NestedMenu
-                  items={item.subMenu}
-                  isSidebarOpen={isSidebarOpen}
-                  onAdd={onAdd}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                />
+              <IconWrapper>
+                {item.icon && (
+                  <Icons iconName={item.icon} size={20} color="#ccc" />
+                )}
+                {isSidebarOpen && <span>{item.name}</span>}
+              </IconWrapper>
+
+              {isSidebarOpen && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  {editModeContext?.isEditMode && (
+                    <>
+                      <FaEdit
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onEdit(item);
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <FaPlus
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onAdd(item._id!);
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <FaTrash
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(item._id!);
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    </>
+                  )}
+
+                  {!!item.subMenu?.length && (
+                    <ChevronIcon
+                      animate={{ rotate: isOpen ? 90 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <FaChevronRight />
+                    </ChevronIcon>
+                  )}
+                </div>
               )}
-            </SubMenuContainer>
-          )}
-        </div>
-      ))}{' '}
+            </MenuItem>
+
+            <AnimatePresence initial={false}>
+              {!!item.subMenu?.length && isOpen && (
+                <SubMenuContainer
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: 'easeInOut' }}
+                >
+                  <NestedMenu
+                    items={item.subMenu}
+                    isSidebarOpen={isSidebarOpen}
+                    onAdd={onAdd}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                  />
+                </SubMenuContainer>
+              )}
+            </AnimatePresence>
+          </div>
+        );
+      })}
     </>
   );
 };

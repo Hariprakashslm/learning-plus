@@ -13,8 +13,6 @@ import AddMenuModal from '../AddMenuModel/AddMenuModel';
 
 // Styled Components
 const SidebarContainer = styled(motion.div)`
-  height: 100vh;
-  overflow-y: scroll;
   background: #1e1e2f;
   color: white;
   padding: 20px;
@@ -60,7 +58,7 @@ const ClassicMenu = () => {
   const ref = useRef<RefType>(null);
   return (
     <MenuCollapseContext value={{ isCollapsed }}>
-      <SidebarContainer animate={{ width: isSidebarOpen ? 250 : 60 }}>
+      <SidebarContainer animate={{ width: isSidebarOpen ? 'auto' : 60 }}>
         <MenuListContext value={{ values: menus, setMenus }}>
           <AddMenuModal
             isOpen={isModalOpen}
@@ -94,24 +92,26 @@ const ClassicMenu = () => {
             isSidebarOpen={isSidebarOpen}
             onToggle={() => toggleCollpase((prev) => !prev)}
           />
-          <NestedMenu
-            items={menus}
-            isSidebarOpen={isSidebarOpen}
-            onAdd={(id) => {
-              setParentId(id);
-              setModalOpen(true);
-            }}
-            onEdit={(menu) => {
-              setParentId('');
-              if (ref) ref.current?.setValue(menu);
-              setModalOpen(true);
-            }}
-            onDelete={(id) => {
-              menuService.deleteMenu(id).then(() => {
-                getMenus();
-              });
-            }}
-          />
+          <div style={{ marginTop: '20px' }}>
+            <NestedMenu
+              items={menus}
+              isSidebarOpen={isSidebarOpen}
+              onAdd={(id) => {
+                setParentId(id);
+                setModalOpen(true);
+              }}
+              onEdit={(menu) => {
+                setParentId('');
+                if (ref) ref.current?.setValue(menu);
+                setModalOpen(true);
+              }}
+              onDelete={(id) => {
+                menuService.deleteMenu(id).then(() => {
+                  getMenus();
+                });
+              }}
+            />
+          </div>
         </MenuListContext>
       </SidebarContainer>
     </MenuCollapseContext>
